@@ -1,30 +1,28 @@
 # 运动鞋店铺知识库问答系统
 
-这是一个基于RAG (Retrieval-Augmented Generation) 架构的运动鞋店铺知识库问答系统。系统能够根据用户输入的问题，从知识库中检索相关信息，并生成准确的回答。
+这是一个基于 RAG (Retrieval-Augmented Generation，检索增强生成) 架构的运动鞋店铺知识库问答系统。系统能够根据用户输入的问题，从本地私有知识库中精准检索相关业务规则（如退换货、尺码、发货政策等），并结合大语言模型生成准确、连贯的专属客服回答。
 
 ## 目录结构
 
-```
-├── config
-│   └── config.json.template       # 配置文件模板
-├── data
-│   ├── store_knowledge.index      # Faiss 向量库存储目录
-│   └── 运动鞋店铺知识库.txt          # 知识库txt文本文件
-├── lec1_streamchat.py             # 普通的流式输入输出主程序
-├── sql
-│   ├── ai_context.sql             # 对话上下文数据库表结构
-│   └── schema.sql                 # 数据库主要表结构
-└── src
-    ├── 01_write_to_faiss_test.py  # Faiss 向量库写入测试
-    ├── rag_chat_bot.py            # RAG 问答机器人核心实现
-    ├── rag_chat_api.py            # RAG 问答机器人Web API实现
-    ├── text_vectorizer.py         # 文本向量化工具类及量化
-    └── vectorizer_test.py         # 向量化功能测试
+```text
+├── conf/
+│   └── config.template.json    # 配置文件模板（包含 MySQL 与 OpenAI 密钥配置）
+├── database/
+│   ├── init_schema.sql         # 数据库表结构建表脚本 (创建 ai_context 表)
+│   └── seed_knowledge.sql      # 知识库初始数据 SQL 导入脚本
+├── data/                       # 数据与索引存储目录（存放原始文本与生成的向量文件）
+│   ├── store_knowledge.index   # Faiss 向量库索引文件 (运行代码后生成)
+│   └── 运动鞋店铺知识库.txt       # 知识库原始文本文件
+├── src/                        # 核心源代码目录
+│   ├── rag_chat_bot.py         # 终端控制台 RAG 问答机器人交互主程序
+│   ├── rag_chat_api.py         # RAG 问答机器人 Web API 服务端程序
+│   ├── text_vectorizer.py      # 核心逻辑：文本向量化、MySQL入库与 Faiss 索引构建
+│   └── vectorizer_test.py      # 向量检索功能独立测试脚本
 ```
 
 ## 配置说明
 
-在使用前，需要根据 `config.json.template` 创建 `config.json` 文件，填入相应的配置。
+在使用前，需要根据 `conf/config.template.json` 创建 `config.json` 文件，填入相应的配置。
 
 用户应当自行创建 `data/` 目录，并将知识库文本文件 `运动鞋店铺知识库.txt` 放入其中。
 
@@ -35,23 +33,22 @@
 pip install -r requirements.txt
 ```
 
-2. 启动普通的流式输入输出（第一节课作业）：
-```bash
-python lec1_streamchat.py
-```
-
-3. 完成知识库文本向量化，并测试：
+2. 初始化数据库并构建知识库向量索引：
 ```bash
 python src/text_vectorizer.py
+```
+
+3. 测试向量检索功能是否正常：
+```bash
 python src/vectorizer_test.py
 ```
 
-4. 启动RAG问答机器人（第二节课作业）：
+4. 启动 RAG 问答机器人 (控制台交互模式)：
 ```bash
 python src/rag_chat_bot.py
 ```
 
-5. 启动RAG问答机器人Web API（第三节课作业）：
+5. 启动 RAG 问答机器人 Web API 服务：
 ```bash
 python src/rag_chat_api.py
 ```
@@ -111,12 +108,11 @@ curl -X POST http://localhost:8080/chat \
 - `text_vectorizer.py`: 负责文本向量化，使用 OpenAI 的 embedding 模型
 - `rag_chat_bot.py`: 实现 RAG 架构的问答逻辑
 - `rag_chat_api.py`: 实现 RAG 问答机器人的Web API接口
-- `sql/`: 包含数据库表结构，用于创建知识库文本数据库
-- 测试文件可用于功能验证和调试
+
 
 ## 注意事项
 
-- 请确保 OpenAI API Key 配置正确
-- 首次运行需要建立向量库，可能需要一定时间
-- 建议使用 Python 3.9 或以上版本
+- 请确保你的网络环境能够正常访问 OpenAI API，或配置了相应的代理。
+- 首次运行向量化脚本时需要建立向量库并请求外部 API，可能需要一定时间，请耐心等待。
+- 建议使用 Python 3.8 或以上版本
 - Web API 默认运行在 8080 端口，可通过配置文件修改
