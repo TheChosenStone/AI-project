@@ -169,5 +169,5 @@ class RAGChatBot:
                 print(f"\n发生错误: {str(e)}")
 
 if __name__ == "__main__":
-    rag_bot = RAGChatBot('config/config.json')
+    rag_bot = RAGChatBot('conf/config.json')
     rag_bot.chat()
