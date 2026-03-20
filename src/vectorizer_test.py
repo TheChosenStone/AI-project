@@ -3,7 +3,7 @@ from text_vectorizer import TextVectorizer
 def test_search():
     """ 测试：向量化输入文本，查询并输出相似的知识库文本 """
     # 初始化向量器
-    vectorizer = TextVectorizer('config/config.json')
+    vectorizer = TextVectorizer('conf/config.json')
     
     # 加载已存在的索引
     vectorizer.load_index("data/store_knowledge.index")
