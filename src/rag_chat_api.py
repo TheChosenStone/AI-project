@@ -71,7 +71,7 @@ class RAGChatService:
         self.config = self._load_config(config_path)
         self.completion_handler = ChatCompletionHandler(self.config['openai']['api_key'])
         self.vectorizer = TextVectorizer(config_path)
-        self.vectorizer.load_index("rag-service/data/store_knowledge.index")
+        self.vectorizer.load_index("data/store_knowledge.index")
 
     @staticmethod
     def _load_config(config_path: str) -> Dict[str, Any]:
@@ -240,6 +240,6 @@ def setup_cors(app: Flask):
 
 if __name__ == "__main__":
     setup_logging()
-    api = ChatAPI('rag-service/config/config.json')
+    api = ChatAPI('conf/config.json')
     setup_cors(api.app)
     api.run()
